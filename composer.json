@@ -1,0 +1,21 @@
+{
+    "name": "piurafunk/laravel-scout-redis",
+    "description": "Redis driver for Laravel Scout",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "James Funk",
+            "email": "piurafunk@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Piurafunk\\LaravelScoutRedis\\": "src/"
+        }
+    },
+    "require": {
+        "laravel/scout": "^6.0",
+        "predis/predis": "^1.1"
+    }
+}
