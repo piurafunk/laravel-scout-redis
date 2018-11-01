@@ -8,7 +8,7 @@
 
 namespace Piurafunk\LaravelScoutRedis\Engines;
 
-use Illuminate\Contracts\Redis\Factory as RedisFactory;
+use Illuminate\Contracts\Redis\Connection;
 use Illuminate\Database\Eloquent\Model;
 use Laravel\Scout\Builder;
 use Laravel\Scout\Engines\Engine;
@@ -16,13 +16,13 @@ use Laravel\Scout\Engines\Engine;
 class RedisEngine extends Engine
 {
     /**
-     * @var \Illuminate\Contracts\Redis\Factory
+     * @var \Illuminate\Contracts\Redis\Connection
      */
     protected $redis;
 
     protected $prefix = 'redis-scout-engine.';
 
-    public function __construct(RedisFactory $redis)
+    public function __construct(Connection $redis)
     {
         $this->redis = $redis;
     }
@@ -165,7 +165,7 @@ class RedisEngine extends Engine
      */
     public function flush($model)
     {
-        $this->redis->hset($this->prefix . get_class($model), []);
+        $this->redis->del([$this->prefix . get_class($model)]);
     }
 
     /**
@@ -185,9 +185,7 @@ class RedisEngine extends Engine
             $model = $this->redis->hget($this->prefix . $class, $key);
 
             if ($this->validResult($model, $builder->query, $builder->wheres)) {
-                $model = json_decode($model, true);
-                $model['class'] = get_class($builder->model);
-                yield $model;
+                yield json_decode($model, true);
             }
         }
     }

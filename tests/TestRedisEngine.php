@@ -8,8 +8,8 @@
 
 namespace Test;
 
-use Illuminate\Contracts\Redis\Factory;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Redis\Connections\PredisConnection;
 use Laravel\Scout\Builder;
 use Mockery;
 use Piurafunk\LaravelScoutRedis\Engines\RedisEngine;
@@ -18,8 +18,8 @@ use Test\Models\BasicModel;
 class TestRedisEngine extends TestCase
 {
     public function testUpdateEntry() {
-        /** @var Factory|Mockery\Mock $redis */
-        $redis = Mockery::mock(Factory::class);
+        /** @var PredisConnection|Mockery\Mock $redis */
+        $redis = Mockery::mock(PredisConnection::class);
 
         $model = new BasicModel;
         $model->id = 1;
@@ -30,12 +30,12 @@ class TestRedisEngine extends TestCase
 
         $engine = new RedisEngine($redis);
 
-        $engine->update(Collection::make($model));
+        $engine->update(Collection::make([$model]));
     }
 
     public function testDeleteEntry() {
-        /** @var Factory|Mockery\Mock $redis */
-        $redis = Mockery::mock(Factory::class);
+        /** @var PredisConnection|Mockery\Mock $redis */
+        $redis = Mockery::mock(PredisConnection::class);
 
         $model = new BasicModel;
         $model->id = 1;
@@ -46,12 +46,12 @@ class TestRedisEngine extends TestCase
 
         $engine = new RedisEngine($redis);
 
-        $engine->delete(Collection::make($model));
+        $engine->delete(Collection::make([$model]));
     }
 
     public function testSearch() {
-        /** @var Factory|Mockery\Mock $redis */
-        $redis = Mockery::mock(Factory::class);
+        /** @var PredisConnection|Mockery\Mock $redis */
+        $redis = Mockery::mock(PredisConnection::class);
 
         $model = new BasicModel;
         $model->word = 'yodles';
@@ -72,8 +72,8 @@ class TestRedisEngine extends TestCase
     }
 
     public function testMapIds() {
-        /** @var Factory|Mockery\Mock $redis */
-        $redis = Mockery::mock(Factory::class);
+        /** @var PredisConnection|Mockery\Mock $redis */
+        $redis = Mockery::mock(PredisConnection::class);
 
         $model = new BasicModel;
         $model->word = 'yodles';
@@ -99,8 +99,8 @@ class TestRedisEngine extends TestCase
     }
 
     public function testMap() {
-        /** @var Factory|Mockery\Mock $redis */
-        $redis = Mockery::mock(Factory::class);
+        /** @var PredisConnection|Mockery\Mock $redis */
+        $redis = Mockery::mock(PredisConnection::class);
 
         $model = new BasicModel;
         $model->word = 'yodles';
@@ -126,8 +126,8 @@ class TestRedisEngine extends TestCase
     }
 
     public function testGetTotalCount() {
-        /** @var Factory|Mockery\Mock $redis */
-        $redis = Mockery::mock(Factory::class);
+        /** @var PredisConnection|Mockery\Mock $redis */
+        $redis = Mockery::mock(PredisConnection::class);
 
         $model = new BasicModel;
         $model->word = 'yodles';
@@ -152,15 +152,15 @@ class TestRedisEngine extends TestCase
     }
 
     public function testFlush() {
-        /** @var Factory|Mockery\Mock $redis */
-        $redis = Mockery::mock(Factory::class);
+        /** @var PredisConnection|Mockery\Mock $redis */
+        $redis = Mockery::mock(PredisConnection::class);
 
         $model = new BasicModel;
         $model->word = 'yodles';
         $model->id = 1;
 
-        $redis->shouldReceive('hset')
-            ->with('redis-scout-engine.Test\\Models\\BasicModel', []);
+        $redis->shouldReceive('del')
+            ->with(['redis-scout-engine.Test\\Models\\BasicModel']);
 
         $engine = new RedisEngine($redis);
 
